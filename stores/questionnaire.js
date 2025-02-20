@@ -853,5 +853,21 @@ export const useQuestionnaireStore = defineStore("questionnaire", {
       // Update the answer while maintaining reactivity
       industryQuestions[questionIndex].answer = answer;
     },
+    saveQuestionnaireData(industry) {
+      try {
+        // Create a clean copy of the data to save
+        const dataToSave = {
+          industry: industry,
+          questions: JSON.parse(JSON.stringify(this[industry])), // Deep clone the array
+          timestamp: new Date().toISOString(),
+        };
+
+        // Stringify and store in localStorage
+        localStorage.setItem("questionnaireData", JSON.stringify(dataToSave));
+        console.log("Questionnaire data saved successfully:", dataToSave);
+      } catch (error) {
+        console.error("Failed to save questionnaire data:", error);
+      }
+    },
   },
 });

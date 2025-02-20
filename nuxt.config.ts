@@ -17,5 +17,11 @@ export default defineNuxtConfig({
     autoImport: true
   },
   compatibilityDate: '2024-11-01',
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+  nitro: {
+    externals: {
+      inline: ['mongoose', 'mongodb']
+    }
+  },
 })
+

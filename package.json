@@ -12,11 +12,18 @@
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@pinia/nuxt": "^0.10.1",
+    "@vueuse/core": "^12.7.0",
     "animate.css": "^4.1.1",
+    "axios": "^1.7.9",
+    "chart.js": "^4.4.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gridfs-stream": "^1.1.1",
     "lucide-react": "^0.475.0",
+    "mongodb": "^6.13.0",
     "mongoose": "^8.10.1",
+    "multer": "^1.4.4",
+    "multer-gridfs-storage": "^5.0.2",
     "nuxt": "^3.15.4",
     "papaparse": "^5.5.2",
     "pinia": "^3.0.1",
@@ -24,7 +31,9 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "vue": "latest",
+    "vue-chartjs": "^5.3.2",
     "vue-icons": "^2.0.0",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "xlsx": "^0.18.5"
   }
 }

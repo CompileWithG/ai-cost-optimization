@@ -14,7 +14,7 @@
         <div v-if="selectedIndustry" class="fixed top-4 right-4 z-50 animate__animated animate__fadeInRight">
             <NuxtLink to="/data-upload"
                 class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 font-semibold flex items-center gap-2 group">
-                <span>Proceed</span>
+                <span @click="handleProceed">Proceed</span>
                 <Icon name="ion:arrow-forward" class="text-xl group-hover:translate-x-1 transition-transform" />
             </NuxtLink>
         </div>
@@ -187,6 +187,13 @@ const industryQuestions = computed(() => {
 
 function selectIndustry(industry) {
     selectedIndustry.value = industry;
+}
+function handleProceed() {
+    if (selectedIndustry.value) {
+        // Save to localStorage before navigating
+        store.saveQuestionnaireData(selectedIndustry.value);
+    }
+    navigateTo('/info');
 }
 </script>
 

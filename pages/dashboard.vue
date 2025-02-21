@@ -127,8 +127,26 @@
                     </div>
                 </div>
             </div>
+            <div
+                class="bg-gray-900/80 backdrop-blur-2xl rounded-3xl border border-gray-700 p-8 shadow-2xl shadow-black/40">
+                <!-- Add the AI Insights button here -->
+                <div v-if="files.length > 0" class="mb-8 text-center animate-fade-in">
+                    <router-link to="/ai-insights">
+                        <button
+                            class="bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg shadow-cyan-500/20 hover:shadow-purple-500/30 group">
+                            <div class="flex items-center gap-3">
+                                <Icon name="ion:rocket" class="text-xl animate-pulse" />
+                                <span>Generate AI Business Plan</span>
+                                <Icon name="ion:chevron-forward"
+                                    class="opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                            </div>
+                        </button>
+                    </router-link>
+                </div>
+            </div>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -406,5 +424,21 @@ export default {
 canvas {
     width: 100% !important;
     height: 100% !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
 }
 </style>

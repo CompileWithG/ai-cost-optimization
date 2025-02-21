@@ -51,11 +51,18 @@
                                 <span class="font-medium">{{ file.name }}</span>
                                 <span class="text-sm text-gray-500">{{ file.type }}</span>
                             </div>
-                            <button v-if="['csv', 'excel'].includes(file.type)" @click="analyzeFile(file.id)"
-                                class="bg-cyan-600/30 hover:bg-cyan-500/40 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                                <Icon name="ion:stats-chart" class="text-lg" />
-                                Analyze
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button v-if="['csv', 'excel'].includes(file.type)" @click="analyzeFile(file.id)"
+                                    class="bg-cyan-600/30 hover:bg-cyan-500/40 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                                    <Icon name="ion:stats-chart" class="text-lg" />
+                                    Analyze
+                                </button>
+                                <button @click="deleteFile(file.id)"
+                                    class="bg-red-600/30 hover:bg-red-500/40 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                                    <Icon name="ion:trash" class="text-lg" />
+                                    Remove
+                                </button>
+                            </div>
                         </li>
                         <li v-if="!files.length" class="text-center text-gray-500 py-4">
                             No files uploaded yet
@@ -177,7 +184,8 @@ export default {
             const file = event.target.files[0];
             if (!file) return;
 
-            const extension = file.name.split('.').pop().toLowerCase();
+            const extension = file.name
+                .split('.').pop().toLowerCase();
             const type = this.getFileType(extension);
             if (!type) return;
 
@@ -190,11 +198,31 @@ export default {
             }
 
             reader.onload = () => {
-                if (type === 'csv') {
-                    this.analyzeCSV(reader.result);
-                } else {
-                    this.analyzeExcel(reader.result);
-                }
+                const content = reader.result;
+                // Store the file in IndexedDB
+                const transaction = this.db.transaction("files", "readwrite");
+                const store = transaction.objectStore("files");
+                const fileData = {
+                    name: file.name,
+                    type: type,
+                    content: content,
+                    uploadedAt: new Date()
+                };
+                const request = store.add(fileData);
+
+                request.onsuccess = () => {
+                    this.fetchFiles(); // Refresh the list
+                    // Then analyze the file if needed
+                    if (type === 'csv') {
+                        this.analyzeCSV(content);
+                    } else if (type === 'excel') {
+                        this.analyzeExcel(content);
+                    }
+                };
+
+                request.onerror = (event) => {
+                    console.error("Error storing file:", event.target.error);
+                };
             };
         },
 
@@ -220,6 +248,21 @@ export default {
                 } else if (file.type === 'excel') {
                     this.analyzeExcel(file.content);
                 }
+            };
+        },
+
+        deleteFile(fileId) {
+            if (!this.db) return;
+            const transaction = this.db.transaction("files", "readwrite");
+            const store = transaction.objectStore("files");
+            const request = store.delete(fileId);
+
+            request.onsuccess = () => {
+                this.fetchFiles(); // Refresh the list after deletion
+            };
+
+            request.onerror = (event) => {
+                console.error("Error deleting file:", event.target.error);
             };
         },
 
@@ -280,8 +323,8 @@ export default {
                             datasets: [{
                                 label: col,
                                 data: this.analysis.numericStats[col].values,
-                                borderColor: `hsl(${index * 60}, 75%, 50%)`,
-                                backgroundColor: `hsla(${index * 60}, 75%, 50%, 0.1)`,
+                                borderColor: `hsl(${index * 60}, 75 %, 50 %)`,
+                                backgroundColor: `hsla(${index * 60}, 75 %, 50 %, 0.1)`,
                                 tension: 0.4,
                                 borderWidth: 2
                             }]
@@ -293,7 +336,7 @@ export default {
                             scales: {
                                 x: { display: true },
                                 y: {
-                                    grid: { color: 'rgba(255,255,255,0.1)' },
+                                    grid: { color: 'rgba (255,255,255,0.1)' },
                                     ticks: { color: '#9CA3AF' }
                                 }
                             }
@@ -312,7 +355,7 @@ export default {
                         datasets: [{
                             label: 'Average',
                             data: this.analysis.numericColumns.map(col => this.analysis.numericStats[col].values.reduce((a, b) => a + b, 0) / this.analysis.numericStats[col].values.length),
-                            backgroundColor: this.analysis.numericColumns.map((_, i) => `hsl(${i * 60}, 75%, 50%)`),
+                            backgroundColor: this.analysis.numericColumns.map((_, i) => `hsl(${i * 60}, 75 %, 50 %)`),
                         }]
                     },
                     options: {
